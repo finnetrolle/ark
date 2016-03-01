@@ -12,7 +12,9 @@ To copy messages from one queue to another execute this command:
 ```sh
 java -jar ark copy from_queue_name to_queue_name
 ```
-All of your messages will be moved
+All of your messages will be moved.
+> Ark will not create to-queue for you, so you must do it by yourself
+
 
 ### Send
 
