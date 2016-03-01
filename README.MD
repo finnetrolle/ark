@@ -46,3 +46,9 @@ Let's copy some queues on remote server for example:
 java -jar ark copy q.one q.two -h www.rabbit-server.com -u root -p 12345
 ```
 Ark will connect to www.rabbit-server.com with username = root and password = 12345 and copy all messages from q.one to q.two
+
+## ToDo
+
+  - .sh script to write 'ark' instead of java -jar ark-0.1.0.jar
+  - commands to make queues and exchanges
+  - reading queues, exchanges and binding configuration from xml file
