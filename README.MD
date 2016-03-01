@@ -2,6 +2,19 @@
 
 Ark is a simple tool helping you to move messages between RabbitMQ queues.
 
+## Installation
+First you have to install JRE 1.8 or higher and Maven 3. Then clone sources into directory you want to be ark's home and build them
+```ssh
+git clone https://github.com/finnetrolle/ark
+cd ark
+mvn -U clean install
+cd target
+```
+Now you can start application. Let's copy messages for example:
+```ssh
+java -jar ark-0.1.0.jar copy queueOne queueTwo
+```
+
 ## Commands
   - copy from queue A to queue B
   - send message to queue
