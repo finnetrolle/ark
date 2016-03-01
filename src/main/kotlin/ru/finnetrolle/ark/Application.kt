@@ -5,23 +5,6 @@
 package ru.finnetrolle.ark
 
 import com.beust.jcommander.JCommander
-import com.beust.jcommander.Parameter
-import com.rabbitmq.client.ConnectionFactory
-
-fun send(host:String, queue: String, message: String, username: String?, password: String?) {
-    val factory = ConnectionFactory()
-    factory.host = host
-    if (username != null) factory.username = username
-    if (password != null) factory.password = password
-    val connection = factory.newConnection()
-    val channel = connection.createChannel()
-
-    channel.basicPublish("", queue, null, message.toByteArray())
-    println(" [x] sent: ${message}")
-
-    channel.close()
-    connection.close()
-}
 
 fun main(args: Array<String>) {
 
@@ -29,25 +12,33 @@ fun main(args: Array<String>) {
     val jc = JCommander(cli, *args)
     jc.setProgramName("ark")
 
-    when (cli.getCommandType()) {
-        CommandType.PUBLISH_STRING -> {
-            val ops = cli.getCommandParams()
-            if (ops == null) {
-                println("wrong parameters")
-                val sb: StringBuilder = StringBuilder()
-                jc.usage(sb)
-                println(sb.toString())
-                return
-            }
-            send(cli.hostname, ops.get("to").orEmpty(), ops.get("message").orEmpty(), cli.username, cli.password)
-        }
-        else -> {
-            println("Methods is not implemented")
-        }
+    val executor = ActionExecutor(cli.getConnParams())
+    val ops = cli.getCommandParams()
+    if (ops == null) {
+        println("Command con not be executed because of wrong parameters")
+        jc.usage()
+        return
     }
 
+    executeCommand(jc, executor, cli.getCommandType(), ops)
 
+}
 
+fun executeCommand(jc: JCommander, executor: ActionExecutor, commandType: CommandType, ops: Map<String, String>) {
+    when (commandType) {
+        CommandType.PUBLISH_STRING -> {
+            send(executor, ops.get("to").orEmpty(), ops.get("message").orEmpty())
+        }
+        CommandType.COPY_QUEUE_TO_QUEUE -> {
+            copy(executor, ops.get("from").orEmpty(), ops.get("to").orEmpty())
+        }
+        CommandType.HELP -> {
+            jc.usage()
+        }
+        else -> {
+            jc.usage()
+        }
+    }
 }
 
 

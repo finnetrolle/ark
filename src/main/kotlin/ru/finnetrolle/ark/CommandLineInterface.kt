@@ -9,21 +9,20 @@ import java.util.*
  */
 class CommandLineInterface {
 
+    data class ConnParams(val host: String, val user: String, val pass: String)
+
     @Parameter(names = arrayOf("-u", "--username"), description = "username to access RabbitMQ server")
-    var username: String? = null
+    var username: String = "guest"
 
     @Parameter(names = arrayOf("-p", "--password"), description = "password to access RabbitMQ server")
-    var password: String? = null
-
-    @Parameter(names = arrayOf("--help"), help = true)
-    var help: Boolean = true
+    var password: String = "guest"
 
     @Parameter(names = arrayOf("-h", "--hostname"),
-            description = "hostname of RabbitMQ server. Default value is localhost")
+            description = "hostname of RabbitMQ server")
     var hostname: String = "localhost"
 
     @Parameter(description = "command options")
-    var commands: List<String> = ArrayList<String>()
+    var commands: List<String> = ArrayList()
 
     fun getCommandType(): CommandType {
         if (commands.isEmpty()) return UNDEFINED
@@ -32,6 +31,7 @@ class CommandLineInterface {
             "import" -> return PERSIST_QUEUE_TO_DISK
             "export" -> return LOAD_QUEUE_FROM_DISK
             "send" -> return PUBLISH_STRING
+            "help" -> return HELP
             else -> return UNDEFINED
         }
     }
@@ -39,6 +39,8 @@ class CommandLineInterface {
     fun getCommandParams(): Map<String, String>? {
         when (getCommandType()) {
             UNDEFINED -> return null
+            HELP ->
+                return mapOf()
             COPY_QUEUE_TO_QUEUE ->
                 return if (commands.size == 3) mapOf("from" to commands[1], "to" to commands[2]) else null
             PERSIST_QUEUE_TO_DISK ->
@@ -51,7 +53,8 @@ class CommandLineInterface {
         }
     }
 
-
-
+    fun getConnParams(): ConnParams {
+        return ConnParams(this.hostname, this.username, this.password)
+    }
 
 }

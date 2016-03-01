@@ -5,6 +5,7 @@ package ru.finnetrolle.ark
  */
 enum class CommandType {
     UNDEFINED,
+    HELP,
     COPY_QUEUE_TO_QUEUE,
     PERSIST_QUEUE_TO_DISK,
     LOAD_QUEUE_FROM_DISK,
